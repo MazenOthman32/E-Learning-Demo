@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../Components/courseItem.dart';
+import '../../../Components/courseItem.dart';
 
 class FeatureCourseView extends StatelessWidget {
   final List<Map<String, String>> courses = [

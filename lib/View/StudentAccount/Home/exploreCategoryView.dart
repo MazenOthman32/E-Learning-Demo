@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../Components/categoryItem.dart';
+import '../../../Components/categoryItem.dart';
 
 class ExploreCategoryView extends StatelessWidget {
   final List<Map<String, String>> categories = [
@@ -15,7 +15,7 @@ class ExploreCategoryView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Explore Category", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        Text("Educational Game Hub", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         SizedBox(height: 10),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,

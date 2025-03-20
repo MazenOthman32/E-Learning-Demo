@@ -2,11 +2,11 @@ import 'package:flutter/material.dart' ;
 
 import '../Resources/color_resources.dart';
 
-class BottomNavBar extends StatelessWidget {
+class TeacherNavBar extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
 
-  const BottomNavBar({required this.selectedIndex, required this.onItemTapped});
+  const TeacherNavBar({required this.selectedIndex, required this.onItemTapped});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class BottomNavBar extends StatelessWidget {
             onTap: onItemTapped,
             items: [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-              BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: "Cart"),
+
               BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
             ],
           ),

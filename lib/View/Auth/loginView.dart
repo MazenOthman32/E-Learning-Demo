@@ -1,9 +1,10 @@
+import 'package:Growing_Minds/View/StudentAccount/studentMainView.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../Resources/color_resources.dart';
-import '../home/homeView.dart';
-import '../home/testView.dart';
+
+import '../testView.dart';
 
 
 class LoginView extends StatefulWidget {
@@ -28,6 +29,58 @@ class _LoginViewState extends State<LoginView> {
     checkIsLoggedIn();
     _passwordVisible = false;
   }
+  void showLoginErrorBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.red.shade400,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.error, color: Colors.white, size: 40),
+              SizedBox(height: 10),
+              Text(
+                "Login Failed",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+              SizedBox(height: 5),
+              Text(
+                "Invalid email or password. Please try again.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: Colors.white),
+              ),
+              SizedBox(height: 10),
+              SizedBox(
+                width: 150,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  ),
+                  child: Text(
+                    "OK",
+                    style: TextStyle(color: Colors.red.shade400, fontSize: 16),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   void checkIsLoggedIn() async {
  //   loginState = await SharedPreferences.getInstance();
@@ -37,7 +90,7 @@ class _LoginViewState extends State<LoginView> {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
-          builder: (context) => HomeView(),
+          builder: (context) => StudentMainView(),
         ),
             (route) => false,
       );
@@ -117,11 +170,17 @@ class _LoginViewState extends State<LoginView> {
               Row(
                 children: [
                   Expanded(
-                    child:    SizedBox(
+                    child:   SizedBox(
 
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => HomeView(),),);
+                          if (emailController.text == "Student@Demo" && passwordController.text == "123456") {
+                            Navigator.pushReplacementNamed(context, '/studentMainView');
+                          } else if (emailController.text == "Teacher@Demo" && passwordController.text == "123456") {
+                            Navigator.pushReplacementNamed(context, '/teacherMainView');
+                          } else {
+                            showLoginErrorBottomSheet(context);
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorResources.secondry,
@@ -142,29 +201,6 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ],
               ),
-              // TextButton(
-              //   onPressed: () {
-              //     Navigator.push(context, MaterialPageRoute(builder: (context) => test(),));
-              //     // String? encodeQueryParameters(Map<String, String> params) {
-              //     //   return params.entries
-              //     //       .map((e) =>
-              //     //   '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
-              //     //       .join('&');
-              //     // }
-              //     //
-              //     // final Uri emailLaunchUri = Uri(
-              //     //   scheme: 'mailto',
-              //     //   path: 'online@edutiv.com',
-              //     //   query: encodeQueryParameters(
-              //     //       <String, String>{'subject': 'Request an Account'}),
-              //     // );
-              //
-              //   },
-              //   child:
-              //    Text('Already have an account?' ,
-              //       style: GoogleFonts.poppins(fontSize: 13, color: ColorResources.secondry ),),
-              //   ),
-
             ],
           ),
         ),
@@ -233,3 +269,7 @@ class buildEmailField extends StatelessWidget {
     );
   }
 }
+
+
+
+
