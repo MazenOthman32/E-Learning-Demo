@@ -1,11 +1,12 @@
 import 'package:Growing_Minds/View/StudentAccount/studentMainView.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../Resources/color_resources.dart';
 
 import '../testView.dart';
-
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -20,15 +21,16 @@ class _LoginViewState extends State<LoginView> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
- // late SharedPreferences loginState;
-  bool isLoggedIn = false;
+  // late SharedPreferences loginState;
+  // bool isLoggedIn = false;
 
   @override
   void initState() {
     super.initState();
-    checkIsLoggedIn();
+    //    checkIsLoggedIn();
     _passwordVisible = false;
   }
+
   void showLoginErrorBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -51,7 +53,11 @@ class _LoginViewState extends State<LoginView> {
               SizedBox(height: 10),
               Text(
                 "Login Failed",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
               SizedBox(height: 5),
               Text(
@@ -66,7 +72,9 @@ class _LoginViewState extends State<LoginView> {
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   ),
                   child: Text(
@@ -82,20 +90,18 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  void checkIsLoggedIn() async {
- //   loginState = await SharedPreferences.getInstance();
-  //  isLoggedIn = loginState.getBool('isLoggedIn') ?? false;
-
-    if (isLoggedIn == true) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => StudentMainView(),
-        ),
-            (route) => false,
-      );
-    }
-  }
+  // void checkIsLoggedIn() async {
+  //      loginState = await SharedPreferences.getInstance();
+  //     isLoggedIn = loginState.getBool('isLoggedIn') ?? false;
+  //
+  //   if (isLoggedIn == true) {
+  //     Navigator.pushAndRemoveUntil(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => StudentMainView()),
+  //       (route) => false,
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -134,9 +140,7 @@ class _LoginViewState extends State<LoginView> {
                       },
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(8),
-                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
                         ),
                         hintText: 'Enter your password',
                         suffixIcon: IconButton(
@@ -145,9 +149,11 @@ class _LoginViewState extends State<LoginView> {
                               _passwordVisible = !_passwordVisible;
                             });
                           },
-                          icon: Icon(_passwordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off),
+                          icon: Icon(
+                            _passwordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
                         ),
                       ),
                     ),
@@ -158,11 +164,11 @@ class _LoginViewState extends State<LoginView> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () =>
-                        Navigator.pushNamed(context, '/forgetPassword'),
+                    onPressed:
+                        () => Navigator.pushNamed(context, '/forgetPassword'),
                     child: const Text(
                       'Forget password?',
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(color: ColorResources.secondry),
                     ),
                   ),
                 ],
@@ -170,16 +176,72 @@ class _LoginViewState extends State<LoginView> {
               Row(
                 children: [
                   Expanded(
-                    child:   SizedBox(
-
+                    child: SizedBox(
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (emailController.text == "Student@Demo" && passwordController.text == "123456") {
-                            Navigator.pushReplacementNamed(context, '/studentMainView');
-                          } else if (emailController.text == "Teacher@Demo" && passwordController.text == "123456") {
-                            Navigator.pushReplacementNamed(context, '/teacherMainView');
-                          } else {
-                            showLoginErrorBottomSheet(context);
+                        // onPressed: () {
+                        //   if (emailController.text == "Student@Demo" &&
+                        //       passwordController.text == "123456") {
+                        //     Navigator.pushReplacementNamed(
+                        //       context,
+                        //       '/studentMainView',
+                        //     );
+                        //   } else if (emailController.text == "Teacher@Demo" &&
+                        //       passwordController.text == "123456") {
+                        //     Navigator.pushReplacementNamed(
+                        //       context,
+                        //       '/teacherMainView',
+                        //     );
+                        //   } else {
+                        //     showLoginErrorBottomSheet(context);
+                        //   }
+                        // },
+                        onPressed: () async {
+                          try {
+                            final credential = await FirebaseAuth.instance
+                                .signInWithEmailAndPassword(
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                );
+
+                            if (FirebaseAuth
+                                .instance
+                                .currentUser!
+                                .emailVerified) {
+                              // Fetch the user role from Firestore
+                              final docSnapshot =
+                                  await FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(
+                                        FirebaseAuth.instance.currentUser!.uid,
+                                      )
+                                      .get();
+
+                              if (docSnapshot.exists) {
+                                String role = docSnapshot['role'];
+
+                                // Navigate based on role
+                                if (role == 'Student') {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    '/studentMainView',
+                                  );
+                                } else if (role == 'Teacher') {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    '/teacherMainView',
+                                  );
+                                }
+                              }
+                            } else {
+                              showLoginErrorBottomSheet(context);
+                            }
+                          } on FirebaseAuthException catch (e) {
+                            if (e.code == 'user-not-found' ||
+                                e.code == 'wrong-password') {
+                              showLoginErrorBottomSheet(context);
+                            } else {
+                              showLoginErrorBottomSheet(context);
+                            }
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -194,9 +256,32 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         child: Text(
                           "Log In",
-                          style: GoogleFonts.poppins(fontSize: 16, color: Colors.white ),
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pushNamed(context, '/signUp'),
+                    child: Row(
+                      children: [
+                        const Text(
+                          'Dont have an account? ',
+                          style: TextStyle(color: Colors.black54),
+                        ),
+                        const Text(
+                          'Create one',
+                          style: TextStyle(color: ColorResources.secondry),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -210,31 +295,22 @@ class _LoginViewState extends State<LoginView> {
 }
 
 class buildLoginTextHeader extends StatelessWidget {
-  const buildLoginTextHeader({
-    Key? key,
-  }) : super(key: key);
+  const buildLoginTextHeader({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
-height: 350,
+      height: 350,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset(
-            'assets/images/login.png',
-            width: 250,
-            height: 250,
-          ),
-           Text(
-            'Welcome Back',
-            style: GoogleFonts.poppins(fontSize: 28,  ),
-          ),
-           Text(
+          Image.asset('assets/images/login.png', width: 250, height: 250),
+          Text('Welcome Back', style: GoogleFonts.poppins(fontSize: 28)),
+          Text(
             'Please login with your account to continue',
-            style: GoogleFonts.poppins(fontSize: 13, color: Colors.grey ),
+            style: GoogleFonts.poppins(fontSize: 13, color: Colors.grey),
           ),
         ],
       ),
@@ -243,10 +319,8 @@ height: 350,
 }
 
 class buildEmailField extends StatelessWidget {
-  const buildEmailField({
-    Key? key,
-    required this.emailController,
-  }) : super(key: key);
+  const buildEmailField({Key? key, required this.emailController})
+    : super(key: key);
 
   final TextEditingController emailController;
 
@@ -255,21 +329,13 @@ class buildEmailField extends StatelessWidget {
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
       controller: emailController,
-      validator: (email) {
-
-      },
+      validator: (email) {},
       decoration: const InputDecoration(
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(8),
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(8)),
         ),
         hintText: 'Enter your email',
       ),
     );
   }
 }
-
-
-
-

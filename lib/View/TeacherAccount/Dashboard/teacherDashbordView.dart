@@ -25,10 +25,17 @@ class _TeacherDashboardViewState extends State<TeacherDashboardView> {
     4: ['Math 4', 'Social Study 1', 'Arabic 4', 'English 4', 'Science 1'],
   };
   void navigateToAddToQuiz() {
-Navigator.push(context, MaterialPageRoute(builder: (context) => AddQuestionScreen(),));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddQuestionScreen()),
+    );
   }
+
   void navigateToEditToQuiz() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => QuestionListScreen(),));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => QuestionListScreen()),
+    );
   }
 
   void selectYear(int year) {
@@ -103,11 +110,13 @@ Navigator.push(context, MaterialPageRoute(builder: (context) => AddQuestionScree
                 SizedBox(height: 10),
               ],
             ),
-            Builder( // This ensures the correct context is used
-              builder: (context) => IconButton(
-                onPressed: () => Scaffold.of(context).openEndDrawer(),
-                icon: Icon(Icons.menu, color: Colors.white),
-              ),
+            Builder(
+              // This ensures the correct context is used
+              builder:
+                  (context) => IconButton(
+                    onPressed: () => Scaffold.of(context).openEndDrawer(),
+                    icon: Icon(Icons.menu, color: Colors.white),
+                  ),
             ),
           ],
         ),
@@ -117,11 +126,10 @@ Navigator.push(context, MaterialPageRoute(builder: (context) => AddQuestionScree
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: ColorResources.primary,
       endDrawer: Drawer(
-width: 200,
+        width: 200,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -135,18 +143,12 @@ width: 200,
             ListTile(
               leading: Icon(Icons.person),
               title: Text("Profile"),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("Settings"),
-              onTap: () => Navigator.pop(context),
+              onTap: () => Navigator.pushNamed(context, '/teacherProfileView'),
             ),
             ListTile(
               leading: Icon(Icons.logout),
               title: Text("Logout"),
-              onTap: () =>  Navigator.pushReplacementNamed(context, '/login')
-              ,
+              onTap: () => Navigator.pushReplacementNamed(context, '/login'),
             ),
           ],
         ),
@@ -316,7 +318,6 @@ width: 200,
         ),
       ),
     );
-
   }
 }
 

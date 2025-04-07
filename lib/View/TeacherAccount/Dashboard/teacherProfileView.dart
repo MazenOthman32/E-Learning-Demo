@@ -2,8 +2,8 @@ import 'package:Growing_Minds/Resources/color_resources.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class StudentProfileView extends StatelessWidget {
-  const StudentProfileView({super.key});
+class TeacherProfileView extends StatelessWidget {
+  const TeacherProfileView({super.key});
 
   void showLogOutBottomSheet(BuildContext context) {
     showModalBottomSheet(
@@ -108,7 +108,7 @@ class StudentProfileView extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               const Text(
-                'Ahmed Reda',
+                'Mr Ahmed Reda',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -137,7 +137,6 @@ class StudentProfileView extends StatelessWidget {
               ProfileOption(title: 'Profile Data', onTap: () {}),
               ProfileOption(title: 'FAQ', onTap: () {}),
               ProfileOption(title: 'Subscription', onTap: () {}),
-              ProfileOption(title: 'Parents Mode', onTap: () {}),
               ProfileOption(
                 title: 'Log out',
                 onTap: () => showLogOutBottomSheet(context),

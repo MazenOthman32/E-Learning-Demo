@@ -13,6 +13,17 @@ class DatabaseHelper {
     return _database!;
   }
 
+  Future<List<Map<String, dynamic>>> getQuestionsBySubject(
+    String subject,
+  ) async {
+    final db = await database;
+    return await db.query(
+      'questions',
+      where: 'subject = ?',
+      whereArgs: [subject],
+    );
+  }
+
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
@@ -40,9 +51,17 @@ class DatabaseHelper {
     return await db.insert('questions', question);
   }
 
-  Future<int> updateQuestion(int id, Map<String, dynamic> updatedQuestion) async {
+  Future<int> updateQuestion(
+    int id,
+    Map<String, dynamic> updatedQuestion,
+  ) async {
     final db = await instance.database;
-    return await db.update('questions', updatedQuestion, where: 'id = ?', whereArgs: [id]);
+    return await db.update(
+      'questions',
+      updatedQuestion,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   Future<List<Map<String, dynamic>>> getQuestions() async {
